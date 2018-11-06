@@ -119,13 +119,15 @@ async function drawPostDetail(postId) {
   const authorEl = frag.querySelector('.author')
   const bodyEl = frag.querySelector('.body')
   const backEl = frag.querySelector(".back");
-
+  const commentListEl = frag.querySelector('.comment-list')
   // 3. 필요한 데이터 불러오기
   // const {data: {title, body}} 분해대입의 분해대입
   // params는 쿼리스트링을 문자열로 입력하는 대신 객체형태로 입력하여 전해주는 것. 검사 창 네트워크 영역을 통해 확인을 하면서 진행하자.
-  const {data: {title, body, user}} = await api.get('/posts/' + postId, {
+  const {data: {title, body, user, comments}} = await api.get('/posts/' + postId, {
     params: {
-      _expand: 'user'
+      _expand: 'user',
+      _embed: 'comments'
+
     }
   })
   // 4. 내용 채우기
@@ -135,6 +137,23 @@ async function drawPostDetail(postId) {
   titleEl.textContent = title
   bodyEl.textContent = body
   authorEl.textContent = user.username
+  // 댓글 표시
+  for (const commentItem of comments) {
+    // 1. 템플릿 복사
+    const frag = document.importNode(templates.commentItem, true)
+    // 2. 요소 선택
+    const authorEl = frag.querySelector('.author')
+    const bodyEl = frag.querySelector('.body')
+    const deleteEl = frag.querySelector('.delete')
+    // 3. 필요한 데이터 불러오기 - commentItem 안에 다 들어있기 때문에 필요없는 과정.
+
+    // 4. 내용 채우기
+    bodyEl.textContent = commentItem.body
+    // 5. 이벤트 리스너 등록하기
+    // 6. 템플릿을 문서에 삽입
+    commentListEl.appendChild(frag)
+  }
+
   // 5. 이벤트 리스너 등록하기
 
   // 뒤로가기 버튼
