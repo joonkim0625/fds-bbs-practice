@@ -111,11 +111,34 @@ async function drawPostList() {
 // 게시물을 그리는 함수 -> 때마다 다른 게시물을 보여주기 위해 postId라는 매개변수를 받기로 함.
 async function drawPostDetail(postId) {
   // 1. 템플릿 복사
+  const frag = document.importNode(templates.postDetail, true)
+
+
   // 2. 요소 선택
+  const titleEl = frag.querySelector('.title')
+  const authorEl = frag.querySelector('.author')
+  const bodyEl = frag.querySelector('.body')
+  const backEl = frag.querySelector(".back");
+
   // 3. 필요한 데이터 불러오기
+  // const {data: {title, body}} 분해대입의 분해대입
+  const {data: {title, body}} = await api.get('/posts/' + postId)
   // 4. 내용 채우기
+
+  // titleEl.textContent = data.title
+  // bodyEl.textContent = data.body
+  titleEl.textContent = title
+  bodyEl.textContent = body
   // 5. 이벤트 리스너 등록하기
+
+  // 뒤로가기 버튼
+
+  backEl.addEventListener('click', e => {
+    drawPostList()
+  })
   // 6. 템플릿을 문서에 삽입
+  rootEl.textContent = ''
+  rootEl.appendChild(frag)
 }
 
 async function drawNewPostForm() {
