@@ -130,6 +130,21 @@ async function drawPostDetail(postId) {
 
     }
   })
+
+  // 사용자 여러명의 정보를 불러오고 싶을 때 (댓글 기능 - 작성자 보여주기를 위한)
+  // const res = await api.get('/users', {
+  //   params
+  // })
+  // const userList = res.data
+  // 이 코드들이 밑과 같다.
+  const params = new URLSearchParams()
+  comments.forEach(c => {
+    params.append('id', c.userId)
+  })
+  const {data: userList} = await api.get('/users', {
+    params
+  })
+
   // 4. 내용 채우기
 
   // titleEl.textContent = data.title
@@ -149,6 +164,9 @@ async function drawPostDetail(postId) {
 
     // 4. 내용 채우기
     bodyEl.textContent = commentItem.body
+
+    const user = userList.find(item => item.id === commentItem.userId)
+    authorEl.textContent = user.username
     // 5. 이벤트 리스너 등록하기
     // 6. 템플릿을 문서에 삽입
     commentListEl.appendChild(frag)
