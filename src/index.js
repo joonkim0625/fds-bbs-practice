@@ -127,6 +127,8 @@ async function drawPostDetail(postId) {
   const commentListEl = frag.querySelector('.comment-list')
   // comment input을 위한
   const commentFormEl = frag.querySelector('.comment-form')
+  // 수정 버튼을 위한
+  const updateEl = frag.querySelector('.update')
   // 3. 필요한 데이터 불러오기
   // const {data: {title, body}} 분해대입의 분해대입
   // params는 쿼리스트링을 문자열로 입력하는 대신 객체형태로 입력하여 전해주는 것. 검사 창 네트워크 영역을 통해 확인을 하면서 진행하자.
@@ -191,6 +193,11 @@ async function drawPostDetail(postId) {
     drawPostDetail(postId)
   })
 
+  // 수정하기
+  updateEl.addEventListener('click', e => {
+    drawEditPostForm(postId)
+  })
+
   // 뒤로가기 버튼
 
   backEl.addEventListener('click', e => {
@@ -242,11 +249,45 @@ async function drawNewPostForm() {
 // 글 수정
 async function drawEditPostForm(postId) {
   // 1. 템플릿 복사
+  const frag = document.importNode(templates.postForm, true)
   // 2. 요소 선택
+  const formEl = frag.querySelector('.post-form')
+  const backEl = frag.querySelector('.back')
+  const titleEl = frag.querySelector('.title')
+  const bodyEl = frag.querySelector('.body')
+
   // 3. 필요한 데이터 불러오기
+  const {data: {title, body}} = await api.get('/posts/' + postId)
   // 4. 내용 채우기
+  // 이런 식의 작성은 필드에 기존값이 채워진 채로 표시가 된다.
+  titleEl.value = title
+  bodyEl.value = body
   // 5. 이벤트 리스너 등록하기
+
+
+  formEl.addEventListener('submit', async e => {
+    e.preventDefault()
+    const title = e.target.elements.title.value
+    const body = e.target.elements.body.value
+    // 수정을 해주어야 하니 patch를 사용.
+    await api.patch('/posts/' + postId, {
+      title,
+      body
+    })
+    drawPostList()
+  })
+
+  backEl.addEventListener("click", e => {
+    // 브라우저에 내재된 버튼의 기본 기능작동을 방지하기 위한 프리벤트 설정.
+    e.preventDefault()
+    drawPostList();
+  });
+
+
+
   // 6. 템플릿을 문서에 삽입
+  rootEl.textContent = ''
+  rootEl.appendChild(frag)
 }
 
 // 페이지 로드 시 그릴 화면 설정
