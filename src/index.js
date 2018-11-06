@@ -75,6 +75,8 @@ async function drawPostList() {
   const listEl = frag.querySelector('.post-list')
   // 새글 요소
   const createEl = frag.querySelector('.create')
+  // 로그아웃
+  const logoutEl = frag.querySelector('.logout')
 
   // 3. 필요한 데이터 불러오기
   // {data} -> 분해대입을 사용한 것. data를 꺼내와서 바로 변수로 사용 가능.
@@ -108,6 +110,11 @@ async function drawPostList() {
     drawNewPostForm()
   })
 
+  logoutEl.addEventListener('click', e => {
+    localStorage.removeItem('token')
+    drawLoginForm()
+  })
+
   // 6. 템플릿을 문서에 삽입
   rootEl.textContent = ''
   rootEl.appendChild(frag)
@@ -129,6 +136,8 @@ async function drawPostDetail(postId) {
   const commentFormEl = frag.querySelector('.comment-form')
   // 수정 버튼을 위한
   const updateEl = frag.querySelector('.update')
+  // 삭제를 위한
+  const deleteEl = frag.querySelector(".delete");
   // 3. 필요한 데이터 불러오기
   // const {data: {title, body}} 분해대입의 분해대입
   // params는 쿼리스트링을 문자열로 입력하는 대신 객체형태로 입력하여 전해주는 것. 검사 창 네트워크 영역을 통해 확인을 하면서 진행하자.
@@ -177,6 +186,7 @@ async function drawPostDetail(postId) {
     const user = userList.find(item => item.id === commentItem.userId)
     authorEl.textContent = user.username
     // 5. 이벤트 리스너 등록하기
+
     // 6. 템플릿을 문서에 삽입
     commentListEl.appendChild(frag)
   }
@@ -190,7 +200,13 @@ async function drawPostDetail(postId) {
     await api.post(`/posts/${postId}/comments`, {
       body
     })
-    drawPostDetail(postId)
+    drawPostDetail()
+  })
+  // 삭제하기 - 삭제한 뒤 게시글 목록으로 가야함.
+
+  deleteEl.addEventListener('click', async e => {
+    await api.delete('/posts/' + postId)
+    drawPostList()
   })
 
   // 수정하기
