@@ -122,13 +122,19 @@ async function drawPostDetail(postId) {
 
   // 3. 필요한 데이터 불러오기
   // const {data: {title, body}} 분해대입의 분해대입
-  const {data: {title, body}} = await api.get('/posts/' + postId)
+  // params는 쿼리스트링을 문자열로 입력하는 대신 객체형태로 입력하여 전해주는 것. 검사 창 네트워크 영역을 통해 확인을 하면서 진행하자.
+  const {data: {title, body, user}} = await api.get('/posts/' + postId, {
+    params: {
+      _expand: 'user'
+    }
+  })
   // 4. 내용 채우기
 
   // titleEl.textContent = data.title
   // bodyEl.textContent = data.body
   titleEl.textContent = title
   bodyEl.textContent = body
+  authorEl.textContent = user.username
   // 5. 이벤트 리스너 등록하기
 
   // 뒤로가기 버튼
