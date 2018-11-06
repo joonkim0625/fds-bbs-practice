@@ -120,6 +120,8 @@ async function drawPostDetail(postId) {
   const bodyEl = frag.querySelector('.body')
   const backEl = frag.querySelector(".back");
   const commentListEl = frag.querySelector('.comment-list')
+  // comment input을 위한
+  const commentFormEl = frag.querySelector('.comment-form')
   // 3. 필요한 데이터 불러오기
   // const {data: {title, body}} 분해대입의 분해대입
   // params는 쿼리스트링을 문자열로 입력하는 대신 객체형태로 입력하여 전해주는 것. 검사 창 네트워크 영역을 통해 확인을 하면서 진행하자.
@@ -173,6 +175,16 @@ async function drawPostDetail(postId) {
   }
 
   // 5. 이벤트 리스너 등록하기
+  // 코멘트 인풋 폼에 이벤트리스너
+  commentFormEl.addEventListener('submit', async e => {
+    e.preventDefault()
+    const body = e.target.elements.body.value
+    // ``을 이용해서 작성, postId(몇번 게시물을 보여주고 있다는 매개변수를 받는 함수안에 있기에 사용!!)
+    await api.post(`/posts/${postId}/comments`, {
+      body
+    })
+    drawPostDetail(postId)
+  })
 
   // 뒤로가기 버튼
 
