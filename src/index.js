@@ -81,7 +81,7 @@ async function drawPostList() {
   // 3. 필요한 데이터 불러오기
   // {data} -> 분해대입을 사용한 것. data를 꺼내와서 바로 변수로 사용 가능.
   // {data: postList} -> data라는 속성 이름을 가져와서 postList에다가 저장하는 것.
-  //   const {data: postList} = await api.get("/posts?_embed=user"); === const postList = res.data
+  //   const {data: postList} = await api.get("/posts?_expand=user"); === const postList = res.data
   const {data: postList} = await api.get("/posts?_expand=user");
 
   // 4. 내용 채우기
